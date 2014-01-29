@@ -260,7 +260,7 @@ static char *cvsid_aw() { return( cvsid_aw() ? ((char *) NULL) : cpl_cvsid ); }
 alias int* SAFile;   //typedef int *SAFile;
 
 //#ifndef SAOffset
-alias ulong SAOffset;  //typedef unsigned long SAOffset;
+alias core.stdc.config.c_ulong SAOffset;  //typedef unsigned long SAOffset;
 //#endif
 
 struct SAHooks {
