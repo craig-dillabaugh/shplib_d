@@ -264,7 +264,7 @@ alias ulong SAOffset;  //typedef unsigned long SAOffset;
 //#endif
 
 struct SAHooks {
-  extern( C ) SAFile   function( const char* filename, const char* access) FOpen;
+  extern( C ) SAFile   function( const(char)* filename, const(char)* access) FOpen;
   extern( C ) SAOffset function( void* p, SAOffset size, SAOffset nmemb, SAFile file ) FRead;
   extern( C ) SAOffset function( void* p, SAOffset size, SAOffset nmemb, SAFile file ) FWrite;
   extern( C ) SAOffset function( SAFile file, SAOffset offset, int whence ) FSeek;
@@ -272,7 +272,7 @@ struct SAHooks {
   extern( C ) int      function( SAFile file ) FFlush;
   extern( C ) int      function( SAFile file ) FClose;
   extern( C ) int      function( SAFile file ) Remove;
-  extern( C ) void     function( SAFile file ) _Error; //Error is a D keyword?
+  extern( C ) void     function( SAFile file ) Error_; //Error is a D keyword
   extern( C ) double   function( SAFile file ) Atof;
 }
 
@@ -424,24 +424,24 @@ struct SHPObject {
 /* will be NULL as it is not necessary to keep the SHX file open */
 
 //SHPHandle SHPAPI_CALL SHPOpen( const char * pszShapeFile, const char * pszAccess );
-extern( C ) SHPHandle SHPOpen(const char* filename, const char* pszAcces);
+extern( C ) SHPHandle SHPOpen(const(char)* filename, const(char)* pszAcces);
 
 /* SHPHandle SHPAPI_CALL SHPOpenLL( const char *pszShapeFile, const char *pszAccess, 
                  SAHooks *psHooks );
 */
-extern( C ) SHPHandle SHPOpenLL( const char* pszShapeFile, const char* pszAccess, 
+extern( C ) SHPHandle SHPOpenLL( const(char)* pszShapeFile, const(char)* pszAccess, 
                  SAHooks *psHooks );
                  
 /* SHPHandle SHPAPI_CALL
       SHPCreate( const char * pszShapeFile, int nShapeType ); */
-extern( C ) SHPHandle SHPCreate( const char * pszShapeFile, int nShapeType );      
+extern( C ) SHPHandle SHPCreate( const(char)* pszShapeFile, int nShapeType );      
   
   
 /*SHPHandle SHPAPI_CALL
       SHPCreateLL( const char * pszShapeFile, int nShapeType,
                    SAHooks *psHooks );
 */
-extern( C ) SHPHandle SHPCreateLL( const char *pszShapeFile, int nShapeType,
+extern( C ) SHPHandle SHPCreateLL( const(char)* pszShapeFile, int nShapeType,
                    SAHooks *psHooks );
                    
 /* void SHPAPI_CALL SHPGetInfo( SHPHandle hSHP, int * pnEntities, 
@@ -459,7 +459,7 @@ extern( C ) SHPObject* SHPReadObject( SHPHandle hSHP, int iShape );
 /* int SHPAPI_CALL
       SHPWriteObject( SHPHandle hSHP, int iShape, SHPObject * psObject );
 */
-extern( C ) int SHPWriteObject( SHPHandle hSHP, int iShape, SHPObject * psObject );      
+extern( C ) int SHPWriteObject( SHPHandle hSHP, int iShape, SHPObject* psObject );      
       
 /* void SHPAPI_CALL
       SHPDestroyObject( SHPObject * psObject );
@@ -480,10 +480,10 @@ SHPObject SHPAPI_CALL1(*)
                        const double * padfZ, const double * padfM );
 */
 extern( C ) SHPObject* SHPCreateObject( int nSHPType, int nShapeId, int nParts, 
-                       const int * panPartStart, const int * panPartType,
+                       const(int)* panPartStart, const(int)* panPartType,
                        int nVertices, 
-                       const double * padfX, const double * padfY,
-                       const double * padfZ, const double * padfM );
+                       const(double) * padfX, const(double)* padfY,
+                       const(double)* padfZ, const(double)* padfM );
 
 
 
@@ -494,9 +494,9 @@ extern( C ) SHPObject* SHPCreateObject( int nSHPType, int nShapeId, int nParts,
                              const double * padfZ );
 */
 extern( C ) SHPObject* SHPCreateSimpleObject( int nSHPType, int nVertices,
-                             const double * padfX, 
-                             const double * padfY, 
-                             const double * padfZ );
+                             const(double)* padfX, 
+                             const(double)* padfY, 
+                             const(double)* padfZ );
                              
                              
                             
@@ -513,10 +513,10 @@ extern( C ) void SHPClose( SHPHandle hSHP );
 extern( C ) void SHPWriteHeader( SHPHandle hSHP );
 
 //const char SHPAPI_CALL1(*) SHPTypeName( int nSHPType );
-extern( C ) const char*  SHPTypeName( int nSHPType );
+extern( C ) const(char)*  SHPTypeName( int nSHPType );
 
 //const char SHPAPI_CALL1(*) SHPPartTypeName( int nPartType );
-extern( C ) const char* SHPPartTypeName( int nPartType );
+extern( C ) const(char)* SHPPartTypeName( int nPartType );
 
 /* -------------------------------------------------------------------- */
 /*      Shape quadtree indexing API.                                    */
@@ -536,22 +536,22 @@ struct SHPTreeNode {     //typedef struct shape_tree_node
   /* list of shapes stored at this node.  The papsShapeObj pointers
    * or the whole list can be NULL */
   int		nShapeCount;
-  int		*panShapeIds;
-  SHPObject   **papsShapeObj;
+  int*          panShapeIds;
+  SHPObject**   papsShapeObj;
   
   int		nSubNodes;
-  SHPTreeNode[MAX_SUBNODE] *apsSubNode;  
+  SHPTreeNode[MAX_SUBNODE]* apsSubNode;  
 }
 
 
 struct SHPTree {
     SHPHandle   hSHP;
     
-    int		nMaxDepth;
-    int		nDimension;
-    int         nTotalCount;
+    int		 nMaxDepth;
+    int		 nDimension;
+    int          nTotalCount;
     
-    SHPTreeNode	*psRoot;
+    SHPTreeNode* psRoot;
 }
 
 
@@ -567,7 +567,7 @@ extern( C ) void SHPDestroyTree( SHPTree* hTree );
 
 
 //int SHPAPI_CALL SHPWriteTree( SHPTree *hTree, const char * pszFilename );
-extern( C ) int SHPWriteTree( SHPTree* hTree, const char* pszFilename );
+extern( C ) int SHPWriteTree( SHPTree* hTree, const(char)* pszFilename );
 
 //int	SHPAPI_CALL SHPTreeAddShapeId( SHPTree * hTree, SHPObject * psObject );
 extern( C ) int SHPTreeAddShapeId( SHPTree* hTree, SHPObject* psObject );
@@ -576,7 +576,7 @@ extern( C ) int SHPTreeAddShapeId( SHPTree* hTree, SHPObject* psObject );
 extern( C ) int SHPTreeRemoveShapeId( SHPTree* hTree, int nShapeId );
 
 //void 	SHPAPI_CALL SHPTreeTrimExtraNodes( SHPTree * hTree );
-extern( C ) void SHPTreeTrimExtraNodes( SHPTree * hTree );
+extern( C ) void SHPTreeTrimExtraNodes( SHPTree* hTree );
 
 
 /* int    SHPAPI_CALL1(*)
@@ -593,7 +593,7 @@ extern( C ) int* SHPTreeFindLikelyShapes( SHPTree* hTree,
 
 //int SHPAPI_CALL SHPCheckBoundsOverlap( double *, double *, double *, double *, int );
 extern( C ) int SHPCheckBoundsOverlap(double* padfBox1Min, double* padfBox1Max,
-				      double * padfBox2Min, double * padfBox2Max,
+				      double* padfBox2Min, double* padfBox2Max,
 				      int nDimension );
 
 /* int SHPAPI_CALL1(*) 
@@ -601,10 +601,9 @@ SHPSearchDiskTree( FILE *fp,
                    double *padfBoundsMin, double *padfBoundsMax,
                    int *pnShapeCount );
 */
-extern( C ) int* SHPSearchDiskTree( FILE *fp, 
-				    double *padfBoundsMin, double *padfBoundsMax,
-				    int *pnShapeCount );
-//DONE TO HERE 
+extern( C ) int* SHPSearchDiskTree( FILE* fp, 
+				    double* padfBoundsMin, double* padfBoundsMax,
+				    int* pnShapeCount );
 /*
  *The struct SHPDiskTreeInfo is defined in shptree.c as follows:
  *
@@ -628,8 +627,8 @@ alias SHPDiskTreeInfo* SHPTreeDiskHandle;  //Line 484 shapefil.h
 
 //SHPTreeDiskHandle SHPAPI_CALL SHPOpenDiskTree( const char* pszQIXFilename,
 //                                               SAHooks *psHooks );
-extern( C ) SHPTreeDiskHandle SHPOpenDiskTree( const char* pszQIXFilename,
-                                               SAHooks *psHooks );
+extern( C ) SHPTreeDiskHandle SHPOpenDiskTree( const(char)* pszQIXFilename,
+                                               SAHooks* psHooks );
 
 
 extern( C ) void SHPCloseDiskTree( SHPTreeDiskHandle hDiskTree );
@@ -652,19 +651,19 @@ struct DBFInfo {
     int		nRecordLength;
     int		nHeaderLength;
     int		nFields;
-    int		*panFieldOffset;
-    int		*panFieldSize;
-    int		*panFieldDecimals;
-    char	*pachFieldType;
+    int*        panFieldOffset;
+    int*        panFieldSize;
+    int*        panFieldDecimals;
+    char*       pachFieldType;
 
-    char	*pszHeader;
+    char*       pszHeader;
 
     int		nCurrentRecord;
     int		bCurrentRecordModified;
-    char	*pszCurrentRecord;
+    char*       pszCurrentRecord;
 
     int         nWorkFieldLength;
-    char        *pszWorkField;
+    char*       pszWorkField;
     
     int		bNoHeader;
     int		bUpdated;
@@ -672,7 +671,7 @@ struct DBFInfo {
     double      dfDoubleField;
 
     int         iLanguageDriver;
-    char        *pszCodePage;
+    char*       pszCodePage;
 }
 
 alias DBFInfo* DBFHandle;
@@ -688,39 +687,39 @@ enum DBFFieldType
 
 enum int XBASE_FLDHDR_SZ = 32;
 
-extern( C ) DBFHandle DBFOpen( const char* pszDBFFile, const char * pszAccess );
+extern( C ) DBFHandle DBFOpen( const(char)* pszDBFFile, const(char)* pszAccess );
 
-extern( C )DBFHandle DBFOpenLL( const char* pszDBFFile, const char * pszAccess,
+extern( C ) DBFHandle DBFOpenLL( const(char)* pszDBFFile, const(char)* pszAccess,
                  SAHooks *psHooks );
 
-extern( C ) DBFHandle DBFCreate( const char* pszDBFFile );
+extern( C ) DBFHandle DBFCreate( const(char)* pszDBFFile );
 
-extern( C ) DBFHandle DBFCreateEx( const char* pszDBFFile, const char * pszCodePage );
+extern( C ) DBFHandle DBFCreateEx( const(char)* pszDBFFile, const(char)* pszCodePage );
 
-extern( C ) DBFHandle DBFCreateLL( const char* pszDBFFile, const char* pszCodePage, 
+extern( C ) DBFHandle DBFCreateLL( const(char)* pszDBFFile, const(char)* pszCodePage, 
                                    SAHooks *psHooks );
 
 extern( C ) int	DBFGetFieldCount( DBFHandle psDBF );
 
 extern( C ) int	DBFGetRecordCount( DBFHandle psDBF );
 
-extern( C ) int	DBFAddField( DBFHandle hDBF, const char * pszFieldName,
+extern( C ) int	DBFAddField( DBFHandle hDBF, const(char)* pszFieldName,
                 DBFFieldType eType, int nWidth, int nDecimals );
 
-extern( C )int DBFAddNativeFieldType( DBFHandle hDBF, const char * pszFieldName,
+extern( C )int DBFAddNativeFieldType( DBFHandle hDBF, const(char)* pszFieldName,
                                       char chType, int nWidth, int nDecimals );
 
 extern( C ) int	DBFDeleteField( DBFHandle hDBF, int iField );
 
 extern( C ) int DBFReorderFields( DBFHandle psDBF, int* panMap );
 
-extern( C ) int DBFAlterFieldDefn( DBFHandle psDBF, int iField, const char* pszFieldName,
+extern( C ) int DBFAlterFieldDefn( DBFHandle psDBF, int iField, const(char)* pszFieldName,
                                    char chType, int nWidth, int nDecimals );
                                    
 extern( C ) DBFFieldType DBFGetFieldInfo( DBFHandle psDBF, int iField, 
                                           char* pszFieldName, int* pnWidth, int* pnDecimals );
 
-extern( C ) int DBFGetFieldIndex(DBFHandle psDBF, const char *pszFieldName);
+extern( C ) int DBFGetFieldIndex(DBFHandle psDBF, const(char)* pszFieldName);
 
 extern( C ) int DBFReadIntegerAttribute( DBFHandle hDBF, int iShape, int iField );
 
@@ -739,30 +738,30 @@ extern( C ) int DBFWriteDoubleAttribute( DBFHandle hDBF, int iShape, int iField,
                                          double dFieldValue );
                                          
 extern( C ) int DBFWriteStringAttribute( DBFHandle hDBF, int iShape, int iField,
-                                         const char* pszFieldValue );
+                                         const(char)* pszFieldValue );
                                          
 extern( C ) int DBFWriteNULLAttribute( DBFHandle hDBF, int iShape, int iField );
 
 extern( C ) int DBFWriteLogicalAttribute( DBFHandle hDBF, int iShape, int iField,
-			       const char lFieldValue);
+			       const(char) lFieldValue);
 			       
 extern( C ) int DBFWriteAttributeDirectly(DBFHandle psDBF, int hEntity, int iField,
                                           void* pValue );
                                
-extern( C ) const char* DBFReadTuple(DBFHandle psDBF, int hEntity );
+extern( C ) const(char)* DBFReadTuple(DBFHandle psDBF, int hEntity );
 
-extern( C ) int DBFWriteTuple(DBFHandle psDBF, int hEntity, void * pRawTuple );
+extern( C ) int DBFWriteTuple(DBFHandle psDBF, int hEntity, void* pRawTuple );
 
 extern( C ) int DBFIsRecordDeleted( DBFHandle psDBF, int iShape );
 
 extern( C ) int DBFMarkRecordDeleted( DBFHandle psDBF, int iShape, 
                                       int bIsDeleted );
 
-extern( C ) DBFHandle DBFCloneEmpty(DBFHandle psDBF, const char * pszFilename );
+extern( C ) DBFHandle DBFCloneEmpty(DBFHandle psDBF, const(char)* pszFilename );
  
 extern( C ) void DBFClose( DBFHandle hDBF );
 extern( C ) void DBFUpdateHeader( DBFHandle hDBF );
 
 extern( C ) char DBFGetNativeFieldType( DBFHandle hDBF, int iField );
 
-extern( C ) const char* DBFGetCodePage(DBFHandle psDBF );
+extern( C ) const(char)* DBFGetCodePage(DBFHandle psDBF );
