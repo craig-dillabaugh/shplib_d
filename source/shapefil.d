@@ -1,5 +1,4 @@
 
-
 /******************************************************************************
  * $Id: shapefil.h,v 1.52 2011-12-11 22:26:46 fwarmerdam Exp $
  *
@@ -257,13 +256,12 @@ static char *cvsid_aw() { return( cvsid_aw() ? ((char *) NULL) : cpl_cvsid ); }
 /* -------------------------------------------------------------------- */
 /*      IO/Error hook functions.                                        */
 /* -------------------------------------------------------------------- */
-alias int* SAFile;   //typedef int *SAFile;
+alias int* SAFile;
 
-//#ifndef SAOffset
-alias core.stdc.config.c_ulong SAOffset;  //typedef unsigned long SAOffset;
-//#endif
+alias core.stdc.config.c_ulong SAOffset;
 
-struct SAHooks {
+struct SAHooks 
+{
   extern( C ) SAFile   function( const(char)* filename, const(char)* access) FOpen;
   extern( C ) SAOffset function( void* p, SAOffset size, SAOffset nmemb, SAFile file ) FRead;
   extern( C ) SAOffset function( void* p, SAOffset size, SAOffset nmemb, SAFile file ) FWrite;
@@ -276,31 +274,16 @@ struct SAHooks {
   extern( C ) double   function( SAFile file ) Atof;
 }
 
-/*typedef struct {
-    SAFile     (*FOpen) ( const char *filename, const char *access);
-    SAOffset   (*FRead) ( void *p, SAOffset size, SAOffset nmemb, SAFile file);
-    SAOffset   (*FWrite)( void *p, SAOffset size, SAOffset nmemb, SAFile file);
-    SAOffset   (*FSeek) ( SAFile file, SAOffset offset, int whence );
-    SAOffset   (*FTell) ( SAFile file );
-    int        (*FFlush)( SAFile file );
-    int        (*FClose)( SAFile file );
-    int        (*Remove) ( const char *filename );
-
-    void       (*Error) ( const char *message );
-    double     (*Atof)  ( const char *str );
-} SAHooks;   */
-
 //void SHPAPI_CALL SASetupDefaultHooks( SAHooks *psHooks );
 //#ifdef SHPAPI_UTF8_HOOKS
 //void SHPAPI_CALL SASetupUtf8Hooks( SAHooks *psHooks );
 //#endif
-extern( C ) void SASetupDefaultHooks( SAHooks *psHooks );
-extern( C ) void SASetupUtf8Hooks( SAHooks *psHooks );
+extern( C ) void SASetupDefaultHooks( SAHooks *psHooks ) nothrow;
+extern( C ) void SASetupUtf8Hooks( SAHooks *psHooks ) nothrow;
 
 /************************************************************************/
 /*                             SHP Support.                             */
 /************************************************************************/
-
 struct SHPInfo {
   SAHooks 	sHooks;
   SAFile	fpSHP;
@@ -318,43 +301,19 @@ struct SHPInfo {
   int  		nBufSize;
 }
 
-/* typedef	struct
-{
-    SAHooks sHooks;
 
-    SAFile      fpSHP;
-    SAFile 	fpSHX;
+alias SHPInfo* SHPHandle;
 
-    int		nShapeType;			
-    
-    unsigned int 	nFileSize
-
-    int         nRecords;
-    int		nMaxRecords;
-    unsigned int		*panRecOffset;
-    unsigned int		*panRecSize;
-
-    double	adBoundsMin[4];
-    double	adBoundsMax[4];
-
-    int		bUpdated;
-
-    unsigned char *pabyRec;
-    int         nBufSize;
-} SHPInfo; */
-
-alias SHPInfo* SHPHandle;   //typedef SHPInfo * SHPHandle;
 
 /* -------------------------------------------------------------------- */
 /*      Shape types (nSHPType)                                          */
 /* -------------------------------------------------------------------- */
-
 enum 
 {
-  SHPT_NULL = 0, 	// #define SHPT_NULL	0
-  SHPT_POINT = 1, 	// #define SHPT_POINT	1
-  SHPT_ARC = 3, 	// #define SHPT_ARC	3
-  SHPT_POLYGON = 5,	// etc ...
+  SHPT_NULL = 0, 	
+  SHPT_POINT = 1, 	
+  SHPT_ARC = 3, 	
+  SHPT_POLYGON = 5,
   SHPT_MULTIPOINT = 8,
   SHPT_POINTZ = 11,
   SHPT_ARCZ = 13,
@@ -371,11 +330,10 @@ enum
 /*      Part types - everything but SHPT_MULTIPATCH just uses           */
 /*      SHPP_RING.                                                      */
 /* -------------------------------------------------------------------- */
-
 enum 
 {
-  SHPP_TRISTRIP	= 0,	//#define SHPP_TRISTRIP	0
-  SHPP_TRIFAN = 1,	// etc ...
+  SHPP_TRISTRIP	= 0,	
+  SHPP_TRIFAN = 1,
   SHPP_OUTERRING = 2,
   SHPP_INNERRING = 3,
   SHPP_FIRSTRING = 4,
@@ -388,10 +346,10 @@ enum
 /*      SHPObject - represents on shape (without attributes) read       */
 /*      from the .shp file.                                             */
 /* -------------------------------------------------------------------- */
-
-struct SHPObject {
+struct SHPObject 
+{
     int		nSHPType;
-    int		nShapeId; // -1 is unknown/unassigned
+    int		nShapeId;
     
     int		nParts;
     int		*panPartStart;
@@ -423,112 +381,74 @@ struct SHPObject {
 /* If pszAccess is read-only, the fpSHX field of the returned structure */
 /* will be NULL as it is not necessary to keep the SHX file open */
 
-//SHPHandle SHPAPI_CALL SHPOpen( const char * pszShapeFile, const char * pszAccess );
-extern( C ) SHPHandle SHPOpen(const(char)* filename, const(char)* pszAcces);
 
-/* SHPHandle SHPAPI_CALL SHPOpenLL( const char *pszShapeFile, const char *pszAccess, 
-                 SAHooks *psHooks );
-*/
-extern( C ) SHPHandle SHPOpenLL( const(char)* pszShapeFile, const(char)* pszAccess, 
-                 SAHooks *psHooks );
+extern( C ) SHPHandle 
+SHPOpen(const(char)* filename, const(char)* pszAcces) nothrow;
+
+
+extern( C ) SHPHandle 
+SHPOpenLL( const(char)* pszShapeFile, const(char)* pszAccess, 
+           SAHooks *psHooks ) nothrow;
                  
-/* SHPHandle SHPAPI_CALL
-      SHPCreate( const char * pszShapeFile, int nShapeType ); */
-extern( C ) SHPHandle SHPCreate( const(char)* pszShapeFile, int nShapeType );      
+extern( C ) SHPHandle 
+SHPCreate( const(char)* pszShapeFile, int nShapeType ) nothrow;      
   
-  
-/*SHPHandle SHPAPI_CALL
-      SHPCreateLL( const char * pszShapeFile, int nShapeType,
-                   SAHooks *psHooks );
-*/
-extern( C ) SHPHandle SHPCreateLL( const(char)* pszShapeFile, int nShapeType,
-                   SAHooks *psHooks );
+extern( C ) SHPHandle 
+SHPCreateLL( const(char)* pszShapeFile, int nShapeType,
+             SAHooks *psHooks ) nothrow;
                    
-/* void SHPAPI_CALL SHPGetInfo( SHPHandle hSHP, int * pnEntities, 
-	  int * pnShapeType, double * padfMinBound, double * padfMaxBound );
-*/
-extern( C ) void SHPGetInfo( SHPHandle hSHP, int* pnEntities, 
-	  int* pnShapeType, double* padfMinBound, double* padfMaxBound );
+extern( C ) void 
+SHPGetInfo( SHPHandle hSHP, int* pnEntities, 
+	    int* pnShapeType, double* padfMinBound, 
+	    double* padfMaxBound ) nothrow;
 
-
-/* SHPObject SHPAPI_CALL1(*)
-      SHPReadObject( SHPHandle hSHP, int iShape );
-*/      
-extern( C ) SHPObject* SHPReadObject( SHPHandle hSHP, int iShape );     
+extern( C ) SHPObject* 
+SHPReadObject( SHPHandle hSHP, int iShape ) nothrow;     
       
-/* int SHPAPI_CALL
-      SHPWriteObject( SHPHandle hSHP, int iShape, SHPObject * psObject );
-*/
-extern( C ) int SHPWriteObject( SHPHandle hSHP, int iShape, SHPObject* psObject );      
+extern( C ) int 
+SHPWriteObject( SHPHandle hSHP, int iShape, SHPObject* psObject ) nothrow;      
       
-/* void SHPAPI_CALL
-      SHPDestroyObject( SHPObject * psObject );
-*/
-extern( C ) void SHPDestroyObject( SHPObject* psObject );
+extern( C ) void SHPDestroyObject( SHPObject* psObject ) nothrow;
       
-/* void SHPAPI_CALL
-      SHPComputeExtents( SHPObject * psObject );
-*/
-extern( C ) void SHPComputeExtents( SHPObject* psObject );
+extern( C ) void SHPComputeExtents( SHPObject* psObject ) nothrow;
 
-/*
-SHPObject SHPAPI_CALL1(*)
-      SHPCreateObject( int nSHPType, int nShapeId, int nParts, 
-                       const int * panPartStart, const int * panPartType,
-                       int nVertices, 
-                       const double * padfX, const double * padfY,
-                       const double * padfZ, const double * padfM );
-*/
-extern( C ) SHPObject* SHPCreateObject( int nSHPType, int nShapeId, int nParts, 
-                       const(int)* panPartStart, const(int)* panPartType,
-                       int nVertices, 
-                       const(double) * padfX, const(double)* padfY,
-                       const(double)* padfZ, const(double)* padfM );
+extern( C ) SHPObject* 
+SHPCreateObject( int nSHPType, int nShapeId, int nParts, 
+                 const(int)* panPartStart, const(int)* panPartType,
+                 int nVertices, 
+                 const(double) * padfX, const(double)* padfY,
+                 const(double)* padfZ, const(double)* padfM ) nothrow;
 
-
-
-/*SHPObject SHPAPI_CALL1(*)
-      SHPCreateSimpleObject( int nSHPType, int nVertices,
-                             const double * padfX, 
-                             const double * padfY, 
-                             const double * padfZ );
-*/
-extern( C ) SHPObject* SHPCreateSimpleObject( int nSHPType, int nVertices,
-                             const(double)* padfX, 
-                             const(double)* padfY, 
-                             const(double)* padfZ );
+extern( C ) SHPObject* 
+SHPCreateSimpleObject( int nSHPType, int nVertices,
+                       const(double)* padfX, 
+                       const(double)* padfY, 
+                       const(double)* padfZ ) nothrow;
                              
-                             
-                            
 
-/*int SHPAPI_CALL
-      SHPRewindObject( SHPHandle hSHP, SHPObject * psObject );
-*/
-extern( C ) int SHPRewindObject( SHPHandle hSHP, SHPObject* psObject );
+extern( C ) int 
+SHPRewindObject( SHPHandle hSHP, SHPObject* psObject ) nothrow;
 
-//void SHPAPI_CALL SHPClose( SHPHandle hSHP );
-extern( C ) void SHPClose( SHPHandle hSHP );
+extern( C ) void SHPClose( SHPHandle hSHP ) nothrow;
 
-//void SHPAPI_CALL SHPWriteHeader( SHPHandle hSHP );
-extern( C ) void SHPWriteHeader( SHPHandle hSHP );
+extern( C ) void SHPWriteHeader( SHPHandle hSHP ) nothrow;
 
-//const char SHPAPI_CALL1(*) SHPTypeName( int nSHPType );
-extern( C ) const(char)*  SHPTypeName( int nSHPType );
+extern( C ) const(char)*  SHPTypeName( int nSHPType ) nothrow;
 
-//const char SHPAPI_CALL1(*) SHPPartTypeName( int nPartType );
-extern( C ) const(char)* SHPPartTypeName( int nPartType );
+extern( C ) const(char)* SHPPartTypeName( int nPartType ) nothrow;
 
 /* -------------------------------------------------------------------- */
 /*      Shape quadtree indexing API.                                    */
 /* -------------------------------------------------------------------- */
 
 /* this can be two or four for binary or quad tree */
-enum MAX_SUBNODE = 4;  //#define MAX_SUBNODE	4
+enum MAX_SUBNODE = 4;
 
 /* upper limit of tree levels for automatic estimation */
-enum MAX_DEFAULT_TREE_DEPTH = 12; //#define MAX_DEFAULT_TREE_DEPTH 12
+enum MAX_DEFAULT_TREE_DEPTH = 12;
 
-struct SHPTreeNode {     //typedef struct shape_tree_node
+struct SHPTreeNode 
+{
   //region covered by this node.
   double[4]	adBoundsMin;  
   double[4]	adBoundsMax;
@@ -544,7 +464,8 @@ struct SHPTreeNode {     //typedef struct shape_tree_node
 }
 
 
-struct SHPTree {
+struct SHPTree 
+{
     SHPHandle   hSHP;
     
     int		 nMaxDepth;
@@ -555,55 +476,32 @@ struct SHPTree {
 }
 
 
-/*SHPTree SHPAPI_CALL1(*)
-      SHPCreateTree( SHPHandle hSHP, int nDimension, int nMaxDepth,
-                     double *padfBoundsMin, double *padfBoundsMax );
-*/
-extern( C ) SHPTree* SHPCreateTree( SHPHandle hSHP, int nDimension, int nMaxDepth,
-				    double* padfBoundsMin, double* padfBoundsMax );
+extern( C ) SHPTree* 
+SHPCreateTree( SHPHandle hSHP, int nDimension, int nMaxDepth,
+               double* padfBoundsMin, double* padfBoundsMax ) nothrow;
                      
-//void    SHPAPI_CALL  SHPDestroyTree( SHPTree * hTree );
-extern( C ) void SHPDestroyTree( SHPTree* hTree );
+extern( C ) void SHPDestroyTree( SHPTree* hTree ) nothrow;
 
+extern( C ) int SHPWriteTree( SHPTree* hTree, const(char)* pszFilename ) nothrow;
 
-//int SHPAPI_CALL SHPWriteTree( SHPTree *hTree, const char * pszFilename );
-extern( C ) int SHPWriteTree( SHPTree* hTree, const(char)* pszFilename );
+extern( C ) int SHPTreeAddShapeId( SHPTree* hTree, SHPObject* psObject ) nothrow;
 
-//int	SHPAPI_CALL SHPTreeAddShapeId( SHPTree * hTree, SHPObject * psObject );
-extern( C ) int SHPTreeAddShapeId( SHPTree* hTree, SHPObject* psObject );
+extern( C ) int SHPTreeRemoveShapeId( SHPTree* hTree, int nShapeId ) nothrow;
 
-//int	SHPAPI_CALL SHPTreeRemoveShapeId( SHPTree * hTree, int nShapeId );
-extern( C ) int SHPTreeRemoveShapeId( SHPTree* hTree, int nShapeId );
+extern( C ) void SHPTreeTrimExtraNodes( SHPTree* hTree  nothrow;
 
-//void 	SHPAPI_CALL SHPTreeTrimExtraNodes( SHPTree * hTree );
-extern( C ) void SHPTreeTrimExtraNodes( SHPTree* hTree );
+extern( C ) int* 
+SHPTreeFindLikelyShapes( SHPTree* hTree, double* padfBoundsMin,
+                         double* padfBoundsMax, int* pnShapeCount ) nothrow;
 
+extern( C ) int 
+SHPCheckBoundsOverlap(double* padfBox1Min, double* padfBox1Max,
+		      double* padfBox2Min, double* padfBox2Max,
+		      int nDimension ) nothrow;
 
-/* int    SHPAPI_CALL1(*)
-      SHPTreeFindLikelyShapes( SHPTree * hTree,
-                               double * padfBoundsMin,
-                               double * padfBoundsMax,
-                               int * );
-*/
-extern( C ) int* SHPTreeFindLikelyShapes( SHPTree* hTree,
-                              double* padfBoundsMin,
-                              double* padfBoundsMax,
-                              int* pnShapeCount );
-
-
-//int SHPAPI_CALL SHPCheckBoundsOverlap( double *, double *, double *, double *, int );
-extern( C ) int SHPCheckBoundsOverlap(double* padfBox1Min, double* padfBox1Max,
-				      double* padfBox2Min, double* padfBox2Max,
-				      int nDimension );
-
-/* int SHPAPI_CALL1(*) 
-SHPSearchDiskTree( FILE *fp, 
-                   double *padfBoundsMin, double *padfBoundsMax,
-                   int *pnShapeCount );
-*/
 extern( C ) int* SHPSearchDiskTree( FILE* fp, 
 				    double* padfBoundsMin, double* padfBoundsMax,
-				    int* pnShapeCount );
+				    int* pnShapeCount ) nothrow;
 /*
  *The struct SHPDiskTreeInfo is defined in shptree.c as follows:
  *
@@ -612,7 +510,6 @@ extern( C ) int* SHPSearchDiskTree( FILE* fp,
  *   SAHooks sHooks;
  *   SAFile  fpQIX;
  *};
- *
  * Only this typedef is included in the header shapefil.h, but
  * I've added here to get things to compile!
  */
@@ -622,23 +519,22 @@ struct SHPDiskTreeInfo
   SAFile	fpQIX;
 }
  
-alias SHPDiskTreeInfo* SHPTreeDiskHandle;  //Line 484 shapefil.h
+alias SHPDiskTreeInfo* SHPTreeDiskHandle;
+
+extern( C ) SHPTreeDiskHandle 
+SHPOpenDiskTree( const(char)* pszQIXFilename,
+                 SAHooks* psHooks ) nothrow;
 
 
-//SHPTreeDiskHandle SHPAPI_CALL SHPOpenDiskTree( const char* pszQIXFilename,
-//                                               SAHooks *psHooks );
-extern( C ) SHPTreeDiskHandle SHPOpenDiskTree( const(char)* pszQIXFilename,
-                                               SAHooks* psHooks );
+extern( C ) void SHPCloseDiskTree( SHPTreeDiskHandle hDiskTree ) nothrow;
 
+extern( C ) int* 
+SHPSearchDiskTreeEx( SHPTreeDiskHandle hDiskTree, 
+                     double* padfBoundsMin, double* padfBoundsMax,
+                     int* pnShapeCount ) nothrow;
 
-extern( C ) void SHPCloseDiskTree( SHPTreeDiskHandle hDiskTree );
-
-extern( C ) int* SHPSearchDiskTreeEx( SHPTreeDiskHandle hDiskTree, 
-                   double* padfBoundsMin, double* padfBoundsMax,
-                   int* pnShapeCount );
-
-extern( C ) int SHPWriteTreeLL(SHPTree* hTree, const char* pszFilename, 
-			       SAHooks* psHooks );
+extern( C ) int 
+SHPWriteTreeLL(SHPTree* hTree, const char* pszFilename, SAHooks* psHooks ) nothrow;
 
 /************************************************************************/
 /*                             DBF Support.                             */
@@ -687,81 +583,109 @@ enum DBFFieldType
 
 enum int XBASE_FLDHDR_SZ = 32;
 
-extern( C ) DBFHandle DBFOpen( const(char)* pszDBFFile, const(char)* pszAccess );
+extern( C ) DBFHandle 
+DBFOpen( const(char)* pszDBFFile, const(char)* pszAccess ) nothrow;
 
-extern( C ) DBFHandle DBFOpenLL( const(char)* pszDBFFile, const(char)* pszAccess,
-                 SAHooks *psHooks );
+extern( C ) DBFHandle 
+DBFOpenLL( const(char)* pszDBFFile, const(char)* pszAccess,
+           SAHooks *psHooks ) nothrow;
 
-extern( C ) DBFHandle DBFCreate( const(char)* pszDBFFile );
+extern( C ) DBFHandle DBFCreate( const(char)* pszDBFFile ) nothrow;
 
-extern( C ) DBFHandle DBFCreateEx( const(char)* pszDBFFile, const(char)* pszCodePage );
+extern( C ) DBFHandle 
+DBFCreateEx( const(char)* pszDBFFile, const(char)* pszCodePage ) nothrow;
 
-extern( C ) DBFHandle DBFCreateLL( const(char)* pszDBFFile, const(char)* pszCodePage, 
-                                   SAHooks *psHooks );
+extern( C ) DBFHandle 
+DBFCreateLL( const(char)* pszDBFFile, const(char)* pszCodePage, 
+             SAHooks *psHooks ) nothrow;
 
-extern( C ) int	DBFGetFieldCount( DBFHandle psDBF );
+extern( C ) int	
+DBFGetFieldCount( DBFHandle psDBF ) nothrow;
 
-extern( C ) int	DBFGetRecordCount( DBFHandle psDBF );
+extern( C ) int	
+DBFGetRecordCount( DBFHandle psDBF ) nothrow;
 
-extern( C ) int	DBFAddField( DBFHandle hDBF, const(char)* pszFieldName,
-                DBFFieldType eType, int nWidth, int nDecimals );
+extern( C ) int	
+DBFAddField( DBFHandle hDBF, const(char)* pszFieldName,
+             DBFFieldType eType, int nWidth, int nDecimals ) nothrow;
 
-extern( C )int DBFAddNativeFieldType( DBFHandle hDBF, const(char)* pszFieldName,
-                                      char chType, int nWidth, int nDecimals );
+extern( C )int 
+DBFAddNativeFieldType( DBFHandle hDBF, const(char)* pszFieldName,
+                       char chType, int nWidth, int nDecimals ) nothrow;
 
-extern( C ) int	DBFDeleteField( DBFHandle hDBF, int iField );
+extern( C ) int	DBFDeleteField( DBFHandle hDBF, int iField ) nothrow;
 
-extern( C ) int DBFReorderFields( DBFHandle psDBF, int* panMap );
+extern( C ) int DBFReorderFields( DBFHandle psDBF, int* panMap ) nothrow;
 
-extern( C ) int DBFAlterFieldDefn( DBFHandle psDBF, int iField, const(char)* pszFieldName,
-                                   char chType, int nWidth, int nDecimals );
+extern( C ) int 
+DBFAlterFieldDefn( DBFHandle psDBF, int iField, const(char)* pszFieldName,
+                   char chType, int nWidth, int nDecimals ) nothrow;
                                    
-extern( C ) DBFFieldType DBFGetFieldInfo( DBFHandle psDBF, int iField, 
-                                          char* pszFieldName, int* pnWidth, int* pnDecimals );
+extern( C ) DBFFieldType 
+DBFGetFieldInfo( DBFHandle psDBF, int iField, char* pszFieldName, 
+                 int* pnWidth, int* pnDecimals ) nothrow;
 
-extern( C ) int DBFGetFieldIndex(DBFHandle psDBF, const(char)* pszFieldName);
+extern( C ) int 
+DBFGetFieldIndex(DBFHandle psDBF, const(char)* pszFieldName) nothrow;
 
-extern( C ) int DBFReadIntegerAttribute( DBFHandle hDBF, int iShape, int iField );
+extern( C ) int 
+DBFReadIntegerAttribute( DBFHandle hDBF, int iShape, int iField ) nothrow;
 
-extern( C ) double DBFReadDoubleAttribute( DBFHandle hDBF, int iShape, int iField );
+extern( C ) double 
+DBFReadDoubleAttribute( DBFHandle hDBF, int iShape, int iField ) nothrow;
 
-extern( C ) const char* DBFReadStringAttribute( DBFHandle hDBF, int iShape, int iField );
+extern( C ) const(char)* 
+DBFReadStringAttribute( DBFHandle hDBF, int iShape, int iField ) nothrow;
 
-extern( C) const char* DBFReadLogicalAttribute( DBFHandle hDBF, int iShape, int iField );
+extern( C) const(char)* 
+DBFReadLogicalAttribute( DBFHandle hDBF, int iShape, int iField ) nothrow;
 
-extern( C ) int DBFIsAttributeNULL( DBFHandle hDBF, int iShape, int iField );
+extern( C ) int 
+DBFIsAttributeNULL( DBFHandle hDBF, int iShape, int iField ) nothrow;
 
-extern( C ) int DBFWriteIntegerAttribute( DBFHandle hDBF, int iShape, int iField, 
-                                          int nFieldValue );
+extern( C ) int 
+DBFWriteIntegerAttribute( DBFHandle hDBF, int iShape, int iField, 
+                          int nFieldValue ) nothrow;
 
-extern( C ) int DBFWriteDoubleAttribute( DBFHandle hDBF, int iShape, int iField,
-                                         double dFieldValue );
+extern( C ) int 
+DBFWriteDoubleAttribute( DBFHandle hDBF, int iShape, int iField,
+                         double dFieldValue ) nothrow;
                                          
-extern( C ) int DBFWriteStringAttribute( DBFHandle hDBF, int iShape, int iField,
-                                         const(char)* pszFieldValue );
+extern( C ) int 
+DBFWriteStringAttribute( DBFHandle hDBF, int iShape, int iField,
+                         const(char)* pszFieldValue ) nothrow;
                                          
-extern( C ) int DBFWriteNULLAttribute( DBFHandle hDBF, int iShape, int iField );
+extern( C ) int 
+DBFWriteNULLAttribute( DBFHandle hDBF, int iShape, int iField ) nothrow;
 
-extern( C ) int DBFWriteLogicalAttribute( DBFHandle hDBF, int iShape, int iField,
-			       const(char) lFieldValue);
+extern( C ) int 
+DBFWriteLogicalAttribute( DBFHandle hDBF, int iShape, int iField,
+			  const(char) lFieldValue) nothrow;
 			       
-extern( C ) int DBFWriteAttributeDirectly(DBFHandle psDBF, int hEntity, int iField,
-                                          void* pValue );
+extern( C ) int 
+DBFWriteAttributeDirectly(DBFHandle psDBF, int hEntity, int iField,
+                          void* pValue ) nothrow;
                                
-extern( C ) const(char)* DBFReadTuple(DBFHandle psDBF, int hEntity );
+extern( C ) const(char)* 
+DBFReadTuple(DBFHandle psDBF, int hEntity ) nothrow;
 
-extern( C ) int DBFWriteTuple(DBFHandle psDBF, int hEntity, void* pRawTuple );
+extern( C ) int 
+DBFWriteTuple(DBFHandle psDBF, int hEntity, void* pRawTuple ) nothrow;
 
-extern( C ) int DBFIsRecordDeleted( DBFHandle psDBF, int iShape );
+extern( C ) int 
+DBFIsRecordDeleted( DBFHandle psDBF, int iShape ) nothrow;
 
-extern( C ) int DBFMarkRecordDeleted( DBFHandle psDBF, int iShape, 
-                                      int bIsDeleted );
+extern( C ) int 
+DBFMarkRecordDeleted( DBFHandle psDBF, int iShape, 
+                      int bIsDeleted ) nothrow;
 
-extern( C ) DBFHandle DBFCloneEmpty(DBFHandle psDBF, const(char)* pszFilename );
+extern( C ) DBFHandle 
+DBFCloneEmpty(DBFHandle psDBF, const(char)* pszFilename ) nothrow;
  
-extern( C ) void DBFClose( DBFHandle hDBF );
-extern( C ) void DBFUpdateHeader( DBFHandle hDBF );
+extern( C ) void DBFClose( DBFHandle hDBF ) nothrow;
 
-extern( C ) char DBFGetNativeFieldType( DBFHandle hDBF, int iField );
+extern( C ) void DBFUpdateHeader( DBFHandle hDBF ) nothrow;
 
-extern( C ) const(char)* DBFGetCodePage(DBFHandle psDBF );
+extern( C ) char DBFGetNativeFieldType( DBFHandle hDBF, int iField ) nothrow;
+
+extern( C ) const(char)* DBFGetCodePage(DBFHandle psDBF ) nothrow;
