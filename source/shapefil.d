@@ -488,7 +488,7 @@ extern( C ) int SHPTreeAddShapeId( SHPTree* hTree, SHPObject* psObject ) nothrow
 
 extern( C ) int SHPTreeRemoveShapeId( SHPTree* hTree, int nShapeId ) nothrow;
 
-extern( C ) void SHPTreeTrimExtraNodes( SHPTree* hTree  nothrow;
+extern( C ) void SHPTreeTrimExtraNodes( SHPTree* hTree )  nothrow;
 
 extern( C ) int* 
 SHPTreeFindLikelyShapes( SHPTree* hTree, double* padfBoundsMin,
