@@ -1,5 +1,5 @@
 {
-	"name": "shplib.d",
+	"name": "shplib_d",
 	"description": "D bindings for Shapelib. Shapefile reader.",
 	"homepage": "https://github.com/craig-dillabaugh/shplib.d",
 	"homepage": "http://shapelib.maptools.org/",
