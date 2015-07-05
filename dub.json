@@ -9,5 +9,5 @@
 	"authors": [
 		"Craig Dillabaugh"
 	],
-	"libs" : ["libshp"]
+	"libs" : ["shp"]
 }
