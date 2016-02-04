@@ -140,7 +140,7 @@
 
 module shapefil;
  
-import std.c.stdio;  //#include <stdio.h>
+import core.stdc.stdio;  //#include <stdio.h>
 
 /******************
  * Presently I am assuming dbmalloc is not used. 
