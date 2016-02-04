@@ -1,12 +1,13 @@
 {
 	"name": "shplib_d",
 	"description": "D bindings for Shapelib. Shapefile reader.",
+	"homepage": "https://github.com/craig-dillabaugh/shplib.d",
 	"homepage": "http://shapelib.maptools.org/",
+	"importPaths":["."],
 	"targetType": "sourceLibrary",
-	"license": "MIT or LGPL-2.1",
+	"license": "MIT",
 	"authors": [
 		"Craig Dillabaugh",
-                "Mio Iwakura"
 	],
 	"libs" : ["shp"]
 }
